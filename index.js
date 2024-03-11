@@ -88,6 +88,10 @@ app.post("/api/send-email-notification", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("Backend is working!");
+});
+
 // Handle other routes by serving the React app
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../wisetcc-frontend/build", "index.html"));
