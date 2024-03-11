@@ -17,7 +17,10 @@ app.use(express.json());
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Error connecting to MongoDB:", err));
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err)
+    process.exit(1); // Exit the application if MongoDB connection fails
+  });
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
@@ -62,6 +65,7 @@ async function sendEmailNotification(appointmentData) {
     console.log('Email notification sent successfully');
   } catch (error) {
     console.error('Error sending email notification:', error);
+    throw new Error(`Failed to send email notification`);
   }
 }
 
@@ -80,7 +84,7 @@ app.post("/api/send-email-notification", async (req, res) => {
   } catch (error) {
     // Handle errors
     console.error("Error sending email notification:", error);
-    res.status(500).json({ error: "Failed to send email notification" });
+    res.status(500).json({ error: error.message || "Failed to send email notification" });
   }
 });
 
